@@ -3,197 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenAPI Schema UI Final - Toggle Added</title>
+    <title>OpenAPI Schema UI - Star to Asterisk</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; padding: 40px 20px; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; padding: 40px 20px; color: #334155; }
         
-        /* 왼쪽 라인 색상 고정: #C3CDE5 */
-        .property-line { border-left: 2px solid #C3CDE5; }
+        .property-line { border-left: 1px solid #C3CDE5; }
+
+        /* 단락 구분 라인 */
+        .section-divider {
+            border: 0;
+            border-top: 1px dashed #C3CDE5;
+            margin: 32px 0;
+        }
+
+        /* 에스터리스크 (*) 스타일 및 정렬 */
+        .required-mark {
+            color: #2563eb; /* blue-600 */
+            font-size: 15px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 2px; /* 텍스트와 시각적 중앙을 맞추기 위한 미세 조정 */
+        }
         
-        /* 드롭다운 메뉴 스타일 */
+        /* 부드러운 드롭다운 애니메이션 */
         .dropdown-menu {
-            display: none;
+            display: block;
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(-8px);
             position: absolute;
-            top: 105%;
+            top: 100%;
             left: 0;
-            z-index: 50;
-            min-width: 160px;
+            z-index: 100;
+            min-width: 140px;
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
         }
-        .dropdown-menu.active { display: block; }
+        .dropdown-menu.active {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(4px);
+            pointer-events: auto;
+        }
 
-        /* 상단 탭 활성화 스타일 */
-        .tab-button.active {
-            color: #1e40af;
-            border-bottom: 2px solid #1e40af;
-            font-weight: 700;
-            background-color: rgba(239, 246, 255, 0.5);
-        }
+        .tab-button.active { color: #1e40af; font-weight: 600; border-bottom: 2px solid #1e40af; }
+        .collapsible-content { transition: max-height 0.3s ease-in-out; overflow: hidden; }
+        .rotate-arrow { transition: transform 0.2s ease; }
+        .rotated { transform: rotate(-90deg); }
 
-        /* 아코디언 애니메이션용 */
-        .collapsible-content {
-            transition: max-height 0.2s ease-out;
-            overflow: hidden;
-        }
-        .rotate-arrow {
-            transition: transform 0.2s ease;
-        }
-        .rotated {
-            transform: rotate(-90deg);
+        .val-badge {
+            background-color: #F5F8FB;
+            border: 1px solid #D4DBE4;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #727E96;
         }
     </style>
 </head>
 <body>
 
-<div class="max-w-4xl mx-auto bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+<div class="max-w-6xl mx-auto bg-white border border-gray-200 rounded-lg shadow-sm">
     
     <div class="flex border-b border-gray-200">
-        <button onclick="switchTab(this)" class="tab-button px-8 py-4 text-gray-500 font-medium transition-colors">Example</button>
-        <button onclick="switchTab(this)" class="tab-button active px-8 py-4 text-gray-500 font-medium transition-colors">Schema</button>
+        <button onclick="switchTab(this)" class="tab-button px-8 py-4 text-gray-400 font-medium">Example</button>
+        <button onclick="switchTab(this)" class="tab-button active px-8 py-4 font-medium">Schema</button>
     </div>
 
-    <div class="p-8">
+    <div class="p-10 pb-20">
         <p class="text-gray-500 text-sm mb-8 font-medium">OpenAPI 3.0.0 스펙 전체 속성 예시</p>
 
         <div class="mb-8">
-            <div class="flex items-baseline gap-2 mb-2">
-                <h3 class="font-bold text-gray-900 text-lg">Enum 속성</h3>
+            <div class="flex items-baseline gap-2 mb-1">
+                <h3 class="font-bold text-gray-900">Enum 속성</h3>
                 <span class="text-gray-400 text-sm">string</span>
             </div>
-            <p class="text-gray-600 text-sm mb-4">상태값</p>
+            <p class="text-gray-600 text-sm mb-3 font-medium">상태값</p>
             <div class="space-y-2 ml-1 text-sm">
-                <div class="flex items-center">
-                    <span class="w-36 text-gray-400">• Allowed values:</span>
-                    <div class="flex gap-1">
-                        <span class="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-gray-600">active</span>
-                        <span class="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-gray-600">inactive</span>
-                        <span class="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-gray-600">pending</span>
-                    </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-500 w-50">• Allowed values:</span>
+                    <span class="val-badge">active</span><span class="val-badge">inactive</span><span class="val-badge">pending</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-500 w-28">• Default:</span>
+                    <span class="val-badge">pending</span>
                 </div>
             </div>
         </div>
 
-        <div class="border-t border-dashed border-gray-200 my-8"></div>
+        <hr class="section-divider">
 
         <div class="mb-8">
-            <button onclick="toggleSection('allof-content', 'allof-arrow')" class="flex items-center gap-2 mb-1 w-full text-left focus:outline-none">
+            <button onclick="toggleSection('allof-content', 'allof-arrow')" class="flex items-center gap-2 mb-1">
                 <svg id="allof-arrow" class="w-3 h-3 text-gray-400 rotate-arrow" fill="currentColor" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
                 <span class="font-bold text-gray-900">Allof 속성</span>
-                <span class="text-gray-400 text-sm">프로필 정보</span>
+                <span class="text-gray-400 text-sm font-normal">프로필 정보</span>
             </button>
-            <p class="text-gray-500 text-xs ml-5 mb-4 font-medium">모든 조건을 일치</p>
+            <p class="text-gray-500 text-[13px] ml-5 mb-4 font-medium">모든 조건을 일치</p>
             
-            <div id="allof-content" class="collapsible-content ml-5 space-y-4">
+            <div id="allof-content" class="collapsible-content ml-5 space-y-5">
                 <div class="property-line pl-4">
-                    <div class="flex items-center gap-1 font-bold text-sm text-gray-800">
-                        <span class="text-blue-600 text-xs">★</span> id <span class="text-gray-400 font-normal ml-1">integer read-only</span>
+                    <div class="flex items-center gap-1 text-sm font-bold text-gray-800">
+                        <span class="required-mark">*</span>
+                        <span>id</span>
+                        <span class="text-gray-400 ml-1 font-normal">integer read-only</span>
                     </div>
-                    <div class="mt-1"><span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium">>= 1</span></div>
+                    <div class="mt-2"><span class="val-badge">>= 1</span></div>
                 </div>
                 <div class="property-line pl-4">
-                    <div class="flex items-center gap-1 font-bold text-sm text-gray-800">
-                        <span class="text-blue-600 text-xs">★</span> email <span class="text-gray-400 font-normal ml-1">string&lt;email&gt;</span>
+                    <div class="flex items-center gap-1 text-sm font-bold text-gray-800">
+                        <span class="required-mark">*</span>
+                        <span>email</span>
+                        <span class="text-gray-400 ml-1 font-normal">string&lt;email&gt;</span>
                     </div>
-                    <div class="mt-1 flex gap-1">
-                        <span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium">>= 5 characters</span>
-                        <span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium"><= 254 characters</span>
-                    </div>
+                    <div class="mt-2 flex gap-2"><span class="val-badge">>= 5 characters</span><span class="val-badge"><= 254 characters</span></div>
                 </div>
             </div>
         </div>
 
-        <div class="border-t border-dashed border-gray-200 my-8"></div>
+        <hr class="section-divider">
 
         <div class="mb-8">
             <div class="flex items-center gap-2 mb-1">
-                <button onclick="toggleSection('anyof-content', 'anyof-arrow')" class="flex items-center gap-2 focus:outline-none">
+                <button onclick="toggleSection('anyof-content', 'anyof-arrow')" class="flex items-center gap-2">
                     <svg id="anyof-arrow" class="w-3 h-3 text-gray-400 rotate-arrow" fill="currentColor" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
                     <span class="font-bold text-gray-900">Anyof 속성</span>
                 </button>
-
-                <div class="relative ml-2">
-                    <button onclick="toggleDropdown(event)" class="flex items-center gap-2 border border-blue-200 px-3 py-1 rounded-md text-sm bg-blue-50 hover:bg-blue-100 transition-colors">
-                        <span class="text-gray-500 font-normal">any of:</span>
-                        <span class="text-blue-700 font-bold">인적사항</span>
-                        <svg class="w-3 h-3 text-blue-700 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                <div class="relative">
+                    <button onclick="toggleDropdown(event)" class="flex items-center text-sm gap-1 py-1 focus:outline-none">
+                        <span class="text-gray-400">any of:</span>
+                        <span class="text-gray-700 font-normal">인적사항</span>
+                        <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div id="anyof-menu" class="dropdown-menu bg-white border border-gray-200 rounded shadow-lg py-1 overflow-hidden">
-                        <div class="px-4 py-2 text-sm text-blue-700 bg-blue-50 font-bold cursor-default">인적사항</div>
+                    <div id="anyof-menu" class="dropdown-menu">
+                        <div class="px-4 py-2 text-sm text-blue-600 font-bold bg-blue-50 border-b border-gray-100">인적사항</div>
                         <div class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 cursor-pointer">연락처</div>
                     </div>
                 </div>
             </div>
-            
-            <p class="text-gray-500 text-xs ml-5 mb-4 font-medium">전체 중 하나 (인적사항 / 연락처)</p>
-            
-            <div id="anyof-content" class="collapsible-content ml-5 space-y-4">
+            <p class="text-gray-500 text-[13px] ml-5 mb-4 font-medium">전체 중 하나 (인적사항 / 연락처)</p>
+            <div id="anyof-content" class="collapsible-content ml-5 space-y-5">
                 <div class="property-line pl-4">
-                    <div class="flex items-center gap-1 font-bold text-sm text-gray-800">
-                        <span class="text-blue-600 text-xs">★</span> age <span class="text-gray-400 font-normal ml-1">integer</span>
+                    <div class="flex items-center gap-1 text-sm font-bold text-gray-800">
+                        <span class="required-mark">*</span>
+                        <span>age</span>
+                        <span class="text-gray-400 ml-1 font-normal">integer</span>
                     </div>
-                    <div class="mt-1"><span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium">>= 1</span></div>
-                </div>
-                <div class="property-line pl-4">
-                    <div class="flex items-center gap-1 font-bold text-sm text-gray-800">
-                        <span class="text-blue-600 text-xs">★</span> name <span class="text-gray-400 font-normal ml-1">string</span>
-                    </div>
-                    <div class="mt-1 flex gap-1">
-                        <span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium">>= 1 characters</span>
-                        <span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium"><= 100 characters</span>
-                    </div>
+                    <div class="mt-2"><span class="val-badge">>= 1</span></div>
                 </div>
             </div>
         </div>
 
+        <hr class="section-divider">
+
+        <div class="mb-4">
+            <div class="flex items-baseline gap-2 mb-1">
+                <h3 class="font-bold text-gray-900">Number 속성</h3>
+                <span class="text-gray-400 text-sm">number</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-3 font-medium">처리 실패 시 오류 코드</p>
+            <div class="flex gap-2 mb-4">
+                <span class="val-badge">>= 0</span><span class="val-badge"><= 999999</span>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    // 탭 전환
     function switchTab(clickedTab) {
-        const tabs = document.querySelectorAll('.tab-button');
-        tabs.forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-button').forEach(tab => tab.classList.remove('active'));
         clickedTab.classList.add('active');
     }
 
-    // 인적사항 드롭다운 토글
     function toggleDropdown(event) {
         event.stopPropagation();
-        const menu = document.getElementById('anyof-menu');
-        menu.classList.toggle('active');
+        document.getElementById('anyof-menu').classList.toggle('active');
     }
 
-    // 섹션 열고 닫기 (Allof/Anyof 컨텐츠 영역)
     function toggleSection(contentId, arrowId) {
         const content = document.getElementById(contentId);
         const arrow = document.getElementById(arrowId);
-        
         if (content.style.maxHeight === "0px") {
-            content.style.maxHeight = content.scrollHeight + "px"; // 펼치기
+            content.style.maxHeight = content.scrollHeight + 100 + "px";
+            setTimeout(() => { if(content.style.maxHeight !== "0px") content.style.overflow = "visible"; }, 300);
             arrow.classList.remove('rotated');
         } else {
-            content.style.maxHeight = "0px"; // 닫기
+            content.style.overflow = "hidden";
+            content.style.maxHeight = "0px";
             arrow.classList.add('rotated');
         }
     }
 
-    // 초기 상태 설정 (모두 열려 있도록)
     window.onload = function() {
-        document.getElementById('allof-content').style.maxHeight = document.getElementById('allof-content').scrollHeight + "px";
-        document.getElementById('anyof-content').style.maxHeight = document.getElementById('anyof-content').scrollHeight + "px";
+        ['allof-content', 'anyof-content'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.style.maxHeight = el.scrollHeight + 100 + "px";
+                el.style.overflow = "visible";
+            }
+        });
     }
 
-    // 드롭다운 외부 클릭 시 닫기
     window.onclick = function() {
         const menu = document.getElementById('anyof-menu');
-        if (menu && menu.classList.contains('active')) {
-            menu.classList.remove('active');
-        }
+        if (menu && menu.classList.contains('active')) menu.classList.remove('active');
     }
 </script>
 
 </body>
-
 </html>
