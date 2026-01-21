@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAPI Schema UI Final</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; padding: 40px 20px; }
+        
+        /* 왼쪽 라인 색상 고정: #C3CDE5 */
+        .property-line { border-left: 2px solid #C3CDE5; }
+        
+        /* 드롭다운 메뉴 스타일 */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 105%;
+            left: 0;
+            z-index: 50;
+            min-width: 160px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .dropdown-menu.active { display: block; }
+
+        /* 상단 탭 활성화 스타일 */
+        .tab-button.active {
+            color: #1e40af; /* blue-800 */
+            border-bottom: 2px solid #1e40af;
+            font-weight: 700;
+            background-color: rgba(239, 246, 255, 0.5); /* blue-50 */
+        }
+    </style>
+</head>
+<body>
+
+<div class="max-w-4xl mx-auto bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+    
+    <div class="flex border-b border-gray-200">
+        <button onclick="switchTab(this)" class="tab-button px-8 py-4 text-gray-500 font-medium transition-colors">Example</button>
+        <button onclick="switchTab(this)" class="tab-button active px-8 py-4 text-gray-500 font-medium transition-colors">Schema</button>
+    </div>
+
+    <div class="p-8">
+        <p class="text-gray-500 text-sm mb-8">OpenAPI 3.0.0 스펙 전체 속성 예시</p>
+
+        <div class="mb-8">
+            <div class="flex items-baseline gap-2 mb-2">
+                <h3 class="font-bold text-gray-900 text-lg">Enum 속성</h3>
+                <span class="text-gray-400 text-sm">string</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">상태값</p>
+            <div class="space-y-2 ml-1 text-sm">
+                <div class="flex items-center">
+                    <span class="w-36 text-gray-400">• Allowwed values:</span>
+                    <div class="flex gap-1">
+                        <span class="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-gray-600">active</span>
+                        <span class="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-gray-600">inactive</span>
+                        <span class="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-gray-600">pending</span>
+                    </div>
+                </div>
+                <div class="flex items-center mt-2">
+                    <span class="w-36 text-gray-400">• Default:</span>
+                    <span class="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-gray-600">pending</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-dashed border-gray-200 my-8"></div>
+
+        <div class="mb-8">
+            <div class="flex items-center gap-2 mb-1">
+                <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                <span class="font-bold text-gray-900">Allof 속성</span>
+                <span class="text-gray-400 text-sm">프로필 정보</span>
+            </div>
+            <p class="text-gray-500 text-xs ml-5 mb-4 font-medium">모든 조건을 일치</p>
+            
+            <div class="ml-5 space-y-4">
+                <div class="property-line pl-4">
+                    <div class="flex items-center gap-1 font-bold text-sm text-gray-800">
+                        <span class="text-blue-600 text-xs">★</span> id <span class="text-gray-400 font-normal ml-1">integer read-only</span>
+                    </div>
+                    <div class="mt-1"><span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium">>= 1</span></div>
+                </div>
+                <div class="property-line pl-4">
+                    <div class="flex items-center gap-1 font-bold text-sm text-gray-800">
+                        <span class="text-blue-600 text-xs">★</span> email <span class="text-gray-400 font-normal ml-1">string&lt;email&gt;</span>
+                    </div>
+                    <div class="mt-1 flex gap-1">
+                        <span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium">>= 5 characters</span>
+                        <span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium"><= 254 characters</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-dashed border-gray-200 my-8"></div>
+
+        <div class="mb-8">
+            <div class="flex items-center gap-2 mb-1">
+                <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                <span class="font-bold text-gray-900">Anyof 속성</span>
+
+                <div class="relative ml-2">
+                    <button onclick="toggleDropdown(event)" class="flex items-center gap-2 border border-blue-200 px-3 py-1 rounded-md text-sm bg-blue-50 hover:bg-blue-100 transition-colors">
+                        <span class="text-gray-500 font-normal">any of:</span>
+                        <span class="text-blue-700 font-bold">인적사항</span>
+                        <svg class="w-3 h-3 text-blue-700 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    
+                    <div id="anyof-menu" class="dropdown-menu bg-white border border-gray-200 rounded shadow-lg py-1 overflow-hidden">
+                        <div class="px-4 py-2 text-sm text-blue-700 bg-blue-50 font-bold cursor-default">인적사항</div>
+                        <div class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 cursor-pointer">연락처</div>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="text-gray-500 text-xs ml-5 mb-4 font-medium">전체 중 하나 (인적사항 / 연락처)</p>
+            
+            <div class="ml-5 space-y-4">
+                <div class="property-line pl-4">
+                    <div class="flex items-center gap-1 font-bold text-sm text-gray-800">
+                        <span class="text-blue-600 text-xs">★</span> age <span class="text-gray-400 font-normal ml-1">integer</span>
+                    </div>
+                    <div class="mt-1"><span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium">>= 1</span></div>
+                </div>
+                <div class="property-line pl-4">
+                    <div class="flex items-center gap-1 font-bold text-sm text-gray-800">
+                        <span class="text-blue-600 text-xs">★</span> name <span class="text-gray-400 font-normal ml-1">string</span>
+                    </div>
+                    <div class="mt-1 flex gap-1">
+                        <span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium">>= 1 characters</span>
+                        <span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium"><= 100 characters</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-dashed border-gray-200 my-8"></div>
+
+        <div class="mb-4">
+            <div class="flex items-baseline gap-2 mb-2">
+                <h3 class="font-bold text-gray-900 text-lg">Number 속성</h3>
+                <span class="text-gray-400 text-sm">number</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">처리 실패 시 오류 코드</p>
+            <div class="flex gap-1 ml-1 mb-4">
+                <span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium">>= 0</span>
+                <span class="bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs text-gray-500 font-medium"><= 999999</span>
+            </div>
+            <div class="space-y-2 ml-1 text-sm">
+                <div class="flex items-center text-gray-600">
+                    <span class="w-36 text-gray-400">• Allowwed values:</span>
+                    <div class="flex gap-1">
+                        <span class="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-gray-600">active</span>
+                        <span class="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-gray-600">inactive</span>
+                        <span class="bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-gray-600">pending</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    /**
+     * 상단 탭 전환 함수
+     */
+    function switchTab(clickedTab) {
+        const tabs = document.querySelectorAll('.tab-button');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        clickedTab.classList.add('active');
+    }
+
+    /**
+     * any of: 인적사항 드롭다운 토글 함수
+     */
+    function toggleDropdown(event) {
+        // 부모로 클릭 이벤트가 전파되어 드롭다운이 바로 닫히는 것을 방지
+        event.stopPropagation();
+        const menu = document.getElementById('anyof-menu');
+        menu.classList.toggle('active');
+    }
+
+    /**
+     * 드롭다운 외부 영역 클릭 시 닫기
+     */
+    window.onclick = function() {
+        const menu = document.getElementById('anyof-menu');
+        if (menu && menu.classList.contains('active')) {
+            menu.classList.remove('active');
+        }
+    }
+</script>
+
+</body>
+</html>
